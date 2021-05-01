@@ -51,18 +51,12 @@ static float calculate(float nb1, float nb2, char sign) {
 
     switch (sign)
     {
-    case '=':
-        return nb1;
-    case '/':
-        return nb1 / nb2;
-    case 'x':
-        return nb1 * nb2;
-    case '-':
-        return nb1 - nb2;
-    case '+':
-        return nb1 + nb2;
-    default:
-        return 0;
+    case '=': return nb1;
+    case '/': return nb1 / nb2;
+    case 'x': return nb1 * nb2;
+    case '-': return nb1 - nb2;
+    case '+': return nb1 + nb2;
+    default : return 0;
     }
 }
 
@@ -114,107 +108,43 @@ static void exec_command(GtkWidget *widget, gpointer data) {
 
 }
 
+typedef struct {
+    char sign;
+    int left;
+    int top;
+    int width;
+    int height;
+
+} Calc_Btn_Layout;
+
 static void create_btn_layout_and_events (GtkWidget *window, GtkWidget *grid) {
     
     GtkWidget *button;
 
-    button = gtk_button_new_with_label("\%");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '\%');
+    Calc_Btn_Layout btn_layout[] = {
+        {'\%', 0,1,1,1}, {'/', 1,1,1,1}, {'x', 2,1,1,1}, {'-', 3,1,1,1},
+        {'7' , 0,2,1,1}, {'8', 1,2,1,1}, {'9', 2,2,1,1}, {'+', 3,2,1,2},
+        {'4' , 0,3,1,1}, {'5', 1,3,1,1}, {'6', 2,3,1,1}, {'1', 0,4,1,1},
+        {'2' , 1,4,1,1}, {'3', 2,4,1,1}, {'=', 3,4,1,2}, {'0', 0,5,2,1},
+        {'C' , 2,5,1,1}
+    };
 
-    gtk_grid_attach(GTK_GRID (grid), button, 0, 1, 1, 1);
+    for (int i = 0; i < 17; i++) {
+        
+        Calc_Btn_Layout current_layout = btn_layout[i];
 
-    button = gtk_button_new_with_label("/");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '/');
-    
-    gtk_grid_attach(GTK_GRID (grid), button, 1, 1, 1, 1);
+        g_print("%c", current_layout.sign);
 
-    button = gtk_button_new_with_label("x");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), 'x');
+        gchar s_sign[2];
+        s_sign[0] = current_layout.sign;
+        s_sign[1] = '\0';
 
-    gtk_grid_attach(GTK_GRID (grid), button, 2, 1, 1, 1);
+        button = gtk_button_new_with_label(s_sign);
 
-    button = gtk_button_new_with_label("-");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '-');
+        g_signal_connect (button, "clicked", G_CALLBACK (exec_command), current_layout.sign);
 
-    gtk_grid_attach(GTK_GRID (grid), button, 3, 1, 1, 1);
-
-    button = gtk_button_new_with_label("C");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), 'C');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 4, 1, 1, 1);
-
-
-
-    button = gtk_button_new_with_label("7");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '7');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 0, 2, 1, 1);
-
-    button = gtk_button_new_with_label("8");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '8');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 1, 2, 1, 1);
-
-    button = gtk_button_new_with_label("9");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '9');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 2, 2, 1, 1);
-
-    button = gtk_button_new_with_label("+");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '+');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 3, 2, 1, 2);
-
-
-
-    button = gtk_button_new_with_label("4");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '4');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 0, 3, 1, 1);
-
-    button = gtk_button_new_with_label("5");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '5');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 1, 3, 1, 1);
-
-    button = gtk_button_new_with_label("6");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '6');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 2, 3, 1, 1);
-
-
-
-    button = gtk_button_new_with_label("1");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '1');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 0, 4, 1, 1);
-
-    button = gtk_button_new_with_label("2");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '2');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 1, 4, 1, 1);
-
-    button = gtk_button_new_with_label("3");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '3');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 2, 4, 1, 1);
-
-    button = gtk_button_new_with_label("=");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '=');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 3, 4, 1, 2);
-
-    
-    button = gtk_button_new_with_label("0");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '0');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 0, 5, 2, 1);
-
-    button = gtk_button_new_with_label(",");
-    g_signal_connect (button, "clicked", G_CALLBACK (exec_command), ',');
-
-    gtk_grid_attach(GTK_GRID (grid), button, 2, 5, 1, 1);
-
+        gtk_grid_attach(GTK_GRID (grid), button, current_layout.left, current_layout.top, current_layout.width, current_layout.height);
+    }
 }
 
 static void activate (GtkApplication *app, gpointer user_data) {
