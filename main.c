@@ -17,11 +17,9 @@ static int get_exponent(char * array, int position) {
 
         position++;
         result++;
-
     }
 
     return result-1;
-
 }
 
 static void accumulate_result(char data) {
@@ -29,8 +27,8 @@ static void accumulate_result(char data) {
     char action = (char)data;
 
     if (equation_str_size != 1 && !isdigit(action) && !isdigit(equation_str[equation_str_size - 2])) {
+        
         equation_str[equation_str_size - 2] = action;
-
         return;
     }
 
@@ -44,15 +42,12 @@ static void accumulate_result(char data) {
         equation_str = realloc(equation_str, sizeof(char) * equation_str_size);
     }
 
-
     equation_str[equation_str_size - 2] = action;
     equation_str[equation_str_size - 1] = '\0';
 
 }
 
 static float calculate(float nb1, float nb2, char sign) {
-
-    g_print("nb1 : %f, nb2 : %f, sign : %c\n", nb1, nb2, sign);
 
     switch (sign)
     {
@@ -67,32 +62,21 @@ static float calculate(float nb1, float nb2, char sign) {
     case '+':
         return nb1 + nb2;
     default:
-        g_print("DEFAULTED\n");
         return 0;
     }
-
 }
 
 static float get_result() {
-    char* number_acc;
-    int number_acc_size = 1;
 
     char last_sign;
-    
-
     float result = 0;
     float current = 0;
-
 
     for (int i = 0; i < equation_str_size - 1; i++) {
 
        
         if (isdigit(equation_str[i])) {
-
-            g_print("CURRENT BEFORE: %f\n", current);
             current = (current + (pow(10, get_exponent(equation_str, i)) * (equation_str[i] - '0')));
-            g_print("CURRENT : %f\n", current);
-
         }
         else {
 
@@ -102,7 +86,6 @@ static float get_result() {
                 result = current;
             }
             else {
-                g_print("LAST_SIGN : %c\n", last_sign);
                 result = calculate(result, current, last_sign);
             }
 
@@ -125,15 +108,10 @@ static void exec_command(GtkWidget *widget, gpointer data) {
 
     if (command == '=') {
         
-        float result = get_result();
-        g_print("RESULT: %f\n", result);
-        
-        
-
+        float result = get_result(); 
         return;
     }
 
-    g_print("%s\n", equation_str);
 }
 
 static void create_btn_layout_and_events (GtkWidget *window, GtkWidget *grid) {
@@ -143,7 +121,6 @@ static void create_btn_layout_and_events (GtkWidget *window, GtkWidget *grid) {
     button = gtk_button_new_with_label("\%");
     g_signal_connect (button, "clicked", G_CALLBACK (exec_command), '\%');
 
-    
     gtk_grid_attach(GTK_GRID (grid), button, 0, 1, 1, 1);
 
     button = gtk_button_new_with_label("/");
@@ -245,10 +222,6 @@ static void activate (GtkApplication *app, gpointer user_data) {
     GtkWidget *window;
     GtkWidget *grid;
 
-
-
-    
-
     window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW (window), "Calc");
     gtk_container_set_border_width (GTK_CONTAINER (window), 10);
@@ -259,24 +232,17 @@ static void activate (GtkApplication *app, gpointer user_data) {
 
     entry = gtk_entry_new();
 
-    // ['12', '+', '25', '*', '30', '/', '15']
-
-
     gtk_grid_attach(GTK_GRID (grid), entry, 0, 0, 5, 1);
 
     create_btn_layout_and_events(window, grid);
 
     gtk_widget_show_all (window);
 
-
 }
 
 int main (int argc, char **argv) {
     GtkApplication *app;
-
     int status;
-
-    //equation.size = 0;
 
     app = gtk_application_new("org.tdg.calc", G_APPLICATION_FLAGS_NONE);
     g_signal_connect(app, "activate", G_CALLBACK (activate), NULL);
@@ -284,5 +250,4 @@ int main (int argc, char **argv) {
     g_object_unref(app);
 
     return status;
-
 }
