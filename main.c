@@ -11,7 +11,7 @@ GtkWidget *entry;
 
 static int get_exponent(char * array, int position) {
 
-    int result = 0;
+    int result = -1;
 
     while (isdigit(array[position])) {
 
@@ -19,12 +19,16 @@ static int get_exponent(char * array, int position) {
         result++;
     }
 
-    return result-1;
+    return result;
 }
 
 static void accumulate_result(char data) {
     
     char action = (char)data;
+
+    if (equation_str_size == 1 && !isdigit(action)) {
+        return;
+    }
 
     if (equation_str_size != 1 && !isdigit(action) && !isdigit(equation_str[equation_str_size - 2])) {
         
@@ -47,6 +51,13 @@ static void accumulate_result(char data) {
 
 }
 
+static void reset_equation() {
+
+        equation_str = realloc(equation_str, sizeof(char));
+        equation_str_size = 1;
+        equation_str[0] = '\0';
+}
+ 
 static float calculate(float nb1, float nb2, char sign) {
 
     switch (sign)
@@ -96,6 +107,12 @@ static void exec_command(GtkWidget *widget, gpointer data) {
 
     char command = (char)data;
 
+    if (command == 'C') {
+        reset_equation();
+        gtk_entry_set_text(entry, equation_str);
+        return;
+    }
+
     accumulate_result(command);
 
     gtk_entry_set_text(entry, equation_str);
@@ -103,9 +120,18 @@ static void exec_command(GtkWidget *widget, gpointer data) {
     if (command == '=') {
         
         float result = get_result(); 
+
+        char c_result[100]; 
+        sprintf(c_result, "%f", result);
+
+        gtk_entry_set_text(entry, c_result);
+        
+        reset_equation();
+
         return;
     }
 
+   
 }
 
 typedef struct {
@@ -132,8 +158,6 @@ static void create_btn_layout_and_events (GtkWidget *window, GtkWidget *grid) {
     for (int i = 0; i < 17; i++) {
         
         Calc_Btn_Layout current_layout = btn_layout[i];
-
-        g_print("%c", current_layout.sign);
 
         gchar s_sign[2];
         s_sign[0] = current_layout.sign;
@@ -178,6 +202,8 @@ int main (int argc, char **argv) {
     g_signal_connect(app, "activate", G_CALLBACK (activate), NULL);
     status = g_application_run (G_APPLICATION (app), argc, argv);
     g_object_unref(app);
+
+    free(equation_str);
 
     return status;
 }
