@@ -12,8 +12,18 @@ typedef struct {
 typedef struct  {
     Equation * eq;
     char sign;
-    GtkWidget * entry;
+    GtkEntry * entry;
 } Command_Args;
+
+typedef struct {
+    char sign;
+    int left;
+    int top;
+    int width;
+    int height;
+
+} Calc_Btn_Layout;
+
 
 static int get_exponent(char * array, int position) {
 
@@ -137,15 +147,6 @@ static void exec_command(GtkWidget *widget, gpointer data) {
     }   
 }
 
-typedef struct {
-    char sign;
-    int left;
-    int top;
-    int width;
-    int height;
-
-} Calc_Btn_Layout;
-
 static void create_btn_layout_and_events (GtkWidget *window, GtkWidget *grid, Equation * eq) {
     
     GtkWidget *button;
@@ -178,7 +179,7 @@ static void create_btn_layout_and_events (GtkWidget *window, GtkWidget *grid, Eq
         Command_Args * args = (Command_Args*)malloc(sizeof(Command_Args));
         args->eq = eq;
         args->sign = current_layout.sign;
-        args->entry = entry;
+        args->entry = (GtkEntry*)entry;
         g_signal_connect (button, "clicked", G_CALLBACK (exec_command), args);
 
         gtk_grid_attach(GTK_GRID (grid), button, current_layout.left, current_layout.top, current_layout.width, current_layout.height);
